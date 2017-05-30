@@ -19,28 +19,28 @@ class motionWatcherSkill(MycroftSkill):
         pass
 
     def handle_start(self, message):
-        subprocess.call(['sudo', 'motion'])
+        subprocess.call(['motion'])
         if(subprocess.call(['echo', '$?'])==0):
-            self.speak("Motion is started")
+            self.speak("Motion is started. I will have a eye on your stuff.")
         else:
-           self.speak("Motion seems to have problems") 
+           self.speak("Motion seems to have starting problems") 
         
     def handle_stop(self, message):
-        subprocess.call(['sudo', 'killall','motion'])
+        subprocess.call(['killall','motion'])
         if(subprocess.call(['echo', '$?'])==0):
-            self.speak("Motion is stoped")
+            self.speak("Motion is stopped")
         else:
-           self.speak("Motion could not been stoped") 
+           self.speak("Motion could not been stopped") 
         
     def handle_status(self, message):
         notRunning=True
         for pid in psutil.pids():
             p = psutil.Process(pid)
             if p.name() == "motion":
-                self.speak("Motion is running")
+                self.speak("Yes, i am watching you")
                 notRunning=False
         if notRunning:
-            self.speak("Motion is not running")
+            self.speak("Right now, my eye is closed")
 
 def create_skill():
     return motionWatcherSkill()
