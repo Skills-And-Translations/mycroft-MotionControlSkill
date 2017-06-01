@@ -37,8 +37,9 @@ class motionWatcherSkill(MycroftSkill):
         for pid in psutil.pids():
             p = psutil.Process(pid)
             if p.name() == "motion":
-                self.speak("Yes, i am watching you")
-                notRunning=False
+                if notRunning:
+                    self.speak("Yes, i am watching you")
+                    notRunning=False
         if notRunning:
             self.speak("Right now, my eye is closed")
 
