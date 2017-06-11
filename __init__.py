@@ -8,6 +8,7 @@ class motionWatcherSkill(MycroftSkill):
         super(motionWatcherSkill, self).__init__("motionWatcherSkill")
 
     def initialize(self):
+        self.language = self.config_core.get('lang')
         startIntent = IntentBuilder("StartIntent").require("startMotionKeyword").build()
         self.register_intent(startIntent, self.handle_start)
         stopIntent = IntentBuilder("StopIntent").require("stopMotionKeyword").build()
@@ -21,16 +22,25 @@ class motionWatcherSkill(MycroftSkill):
     def handle_start(self, message):
         subprocess.call(['motion'])
         if(subprocess.call(['echo', '$?'])==0):
-            self.speak("Motion is started. I will have a eye on your stuff.")
+            if self.language=="de":
+                self.speak("Ueberwachung ist an.")
+            else:
+                self.speak("Motion is started. I will have a eye on your stuff.")
         else:
            self.speak("Motion seems to have starting problems") 
         
     def handle_stop(self, message):
         subprocess.call(['killall','motion'])
         if(subprocess.call(['echo', '$?'])==0):
-            self.speak("Motion is stopped")
+            if self.language=="de":
+                self.speak("Motion is stopped")
+            else:
+                self.speak("Ueberwachung aus")
         else:
-           self.speak("Motion could not been stopped") 
+            if self.language=="de":
+                self.speak("Ueberwachung konnte nicht gestoppt werden")
+            else:
+                self.speak("Motion could not been stopped") 
         
     def handle_status(self, message):
         notRunning=True
@@ -38,10 +48,16 @@ class motionWatcherSkill(MycroftSkill):
             p = psutil.Process(pid)
             if p.name() == "motion":
                 if notRunning:
-                    self.speak("Yes, i am watching you")
+                    if self.language=="de":
+                        self.speak("Ja, ich beobachte dich")
+                    else:
+                        self.speak("Yes, i am watching you")
                     notRunning=False
         if notRunning:
-            self.speak("Right now, my eye is closed")
+            if self.language=="de":
+                self.speak("Die ueberwachung ist ausgeschaltet")
+            else:
+                self.speak("Right now, my eye is closed")
 
 def create_skill():
     return motionWatcherSkill()
